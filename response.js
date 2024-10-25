@@ -14,6 +14,9 @@ export default class Response {
         this.res = HttpContext.res;
         this.errorContent = "";
     }
+    hiddenRequest() {
+        return (hideHeadRequest && this.HttpContext.req.method === 'HEAD');
+    }
     status(number, errorMessage = '') {
         if (errorMessage) {
             this.res.writeHead(number, { 'content-type': 'application/json' });
@@ -25,13 +28,14 @@ export default class Response {
         }
     }
     end(content = null) {
-        if (content) {
+        if (content) 
             this.res.end(content);
-        }
         else
             this.res.end();
-        if (!hideHeadRequest)
+
+        if (!this.hiddenRequest())
             console.log(FgCyan + Bright, "Response status:", this.res.statusCode, this.errorContent);
+        
         return true;
     }
 
@@ -39,7 +43,7 @@ export default class Response {
 
     ok() { return this.status(200); }       // ok status
     ETag(ETag) {
-        if (!hideHeadRequest)
+        if (!this.hiddenRequest())
             console.log(FgCyan + Bright, "Response header ETag key:", ETag);
         this.res.writeHead(204, { 'ETag': ETag });
         this.end();
@@ -57,7 +61,8 @@ export default class Response {
             if (!fromCache)
                 this.addInRequestsCache(obj, ETag)
             let content = JSON.stringify(obj);
-            console.log(FgCyan + Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
+            if (!this.hiddenRequest())
+                console.log(FgCyan + Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
             return this.end(content);
         } else
             return this.end();

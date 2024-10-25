@@ -205,8 +205,8 @@ export default class Repository {
         return null;
     }
     findByField(fieldName, value, excludedId = 0) {
-        if (this.model.securedId && excludedId != 0)
-            id = parseInt(id);
+        if (!this.model.securedId && excludedId != 0)
+            excludedId = parseInt(excludedId);
         if (fieldName) {
             let index = 0;
             for (let object of this.objects()) {

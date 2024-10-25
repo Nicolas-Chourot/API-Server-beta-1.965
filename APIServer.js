@@ -13,6 +13,7 @@ import CachedRequests from "./cachedRequestsManager.js";
 
 let api_server_version = serverVariables.get("main.api_server_version");
 let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
+
 export default class APIServer {
     constructor(port = process.env.PORT || 5000) {
         this.port = port;
@@ -32,14 +33,17 @@ export default class APIServer {
         this.middlewaresPipeline.add(router.Registered_EndPoint);
         this.middlewaresPipeline.add(router.API_EndPoint);
     }
+    hiddenRequest() {
+        return (hideHeadRequest && this.httpContext.req.method === 'HEAD');
+    }
     async handleHttpRequest(req, res) {
         this.markRequestProcessStartTime();
         this.httpContext = await HttpContext.create(req, res);
-        if (!hideHeadRequest)
+        if (!this.hiddenRequest())
             this.showRequestInfo();
         if (!(await this.middlewaresPipeline.handleHttpRequest(this.httpContext)))
             this.httpContext.response.notFound('this end point does not exist...');
-        if (!hideHeadRequest)
+        if (!this.hiddenRequest())
             this.showRequestProcessTime();
         //this.showMemoryUsage();
     }
