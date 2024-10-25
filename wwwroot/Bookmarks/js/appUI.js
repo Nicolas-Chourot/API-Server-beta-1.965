@@ -2,6 +2,7 @@ const periodicRefreshPeriod = 10;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
+let hold_Periodic_Refresh = false;
 
 Init_UI();
 
@@ -23,13 +24,15 @@ async function Init_UI() {
 
 function start_Periodic_Refresh() {
     setInterval(async () => {
-       let etag = await Bookmarks_API.HEAD(); 
-       if (currentETag != etag)  {
-            currentETag = etag;
-            renderBookmarks();
-       }
-    }, 
-    periodicRefreshPeriod * 1000);
+        if (! hold_Periodic_Refresh) {
+            let etag = await Bookmarks_API.HEAD();
+            if (currentETag != etag) {
+                currentETag = etag;
+                renderBookmarks();
+            }
+        }
+    },
+        periodicRefreshPeriod * 1000);
 }
 
 function renderAbout() {
@@ -103,11 +106,14 @@ function compileCategories(bookmarks) {
     }
 }
 async function renderBookmarks() {
+    hold_Periodic_Refresh = false;
     showWaitingGif();
     $("#actionTitle").text("Liste des favoris");
     $("#createBookmark").show();
     $("#abort").hide();
-    let Bookmarks = await Bookmarks_API.Get();
+    let response = await Bookmarks_API.Get();
+    currentETag = response.ETag;
+    let Bookmarks = response.data;
     compileCategories(Bookmarks)
     eraseContent();
     if (Bookmarks !== null) {
@@ -158,7 +164,8 @@ function renderCreateBookmarkForm() {
 }
 async function renderEditBookmarkForm(id) {
     showWaitingGif();
-    let Bookmark = await Bookmarks_API.Get(id);
+    let response = await Bookmarks_API.Get(id)
+    let Bookmark = response.data;
     if (Bookmark !== null)
         renderBookmarkForm(Bookmark);
     else
@@ -169,7 +176,8 @@ async function renderDeleteBookmarkForm(id) {
     $("#createBookmark").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
-    let Bookmark = await Bookmarks_API.Get(id);
+    let response = await Bookmarks_API.Get(id)
+    let Bookmark = response.data;
     let favicon = makeFavicon(Bookmark.Url);
     eraseContent();
     if (Bookmark !== null) {
@@ -232,6 +240,7 @@ function renderBookmarkForm(Bookmark = null) {
     $("#createBookmark").hide();
     $("#abort").show();
     eraseContent();
+    hold_Periodic_Refresh = true;
     let create = Bookmark == null;
     let favicon = `<div class="big-favicon"></div>`;
     if (create)

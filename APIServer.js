@@ -12,7 +12,7 @@ import { handleStaticResourceRequest } from './staticResourcesServer.js';
 import CachedRequests from "./cachedRequestsManager.js";
 
 let api_server_version = serverVariables.get("main.api_server_version");
-
+let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
 export default class APIServer {
     constructor(port = process.env.PORT || 5000) {
         this.port = port;
@@ -35,10 +35,12 @@ export default class APIServer {
     async handleHttpRequest(req, res) {
         this.markRequestProcessStartTime();
         this.httpContext = await HttpContext.create(req, res);
-        this.showRequestInfo();
+        if (!hideHeadRequest)
+            this.showRequestInfo();
         if (!(await this.middlewaresPipeline.handleHttpRequest(this.httpContext)))
             this.httpContext.response.notFound('this end point does not exist...');
-        this.showRequestProcessTime();
+        if (!hideHeadRequest)
+            this.showRequestProcessTime();
         //this.showMemoryUsage();
     }
     start() {

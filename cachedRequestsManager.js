@@ -17,23 +17,23 @@ export default class CachedRequestsManager {
         }
         if (url != "") {
             cachedRequests.push({ url, content, ETag, Expire_Time: utilities.nowInSeconds() + requestCacheExpirationTime });
-            console.log(BgCyan + FgWhite, `Response content of request Get: ${url} has been cached`);
+            console.log(BgCyan + FgWhite, `[Response content of request GET: ${url} has been cached]`);
         }
     }
     static startCachedRequestsCleaner() {
         // periodic cleaning of expired cached requests
         setInterval(CachedRequestsManager.flushExpired, requestCacheExpirationTime * 1000);
-        console.log(BgCyan + FgWhite, "Periodic cached requests cleaning process started...");
+        console.log(BgCyan + FgWhite, "Periodic cached requests content cleaning process started...");
     }
     static find(url) {
         try {
             if (url != "") {
-                for (let endpoint of cachedRequests) {
-                    if (endpoint.url == url) {
+                for (let cache of cachedRequests) {
+                    if (cache.url == url) {
                         // renew cached url
-                        endpoint.Expire_Time = utilities.nowInSeconds() + requestCacheExpirationTime;
-                        console.log(BgCyan + FgWhite, `Response content of request Get: ${url} retrieved from cache`);
-                        return endpoint;
+                        cache.Expire_Time = utilities.nowInSeconds() + requestCacheExpirationTime;
+                        console.log(BgCyan + FgWhite, `[Response content of request Get: ${url} retrieved from cache]`);
+                        return cache;
                     }
                 }
             }
@@ -44,13 +44,13 @@ export default class CachedRequestsManager {
     }
     static clear(url) {
         if (url != "")
-            cachedRequests = cachedRequests.filter(endpoint => endpoint.url.toLowerCase().indexOf(url.toLowerCase()) == -1);
+            cachedRequests = cachedRequests.filter(cache => cache.url.toLowerCase().indexOf(url.toLowerCase()) == -1);
     }
     static flushExpired() {
         let now = utilities.nowInSeconds();
         for (let endpoint of cachedRequests) {
             if (endpoint.Expire_Time <= now)
-                console.log(BgCyan + FgWhite, `Cached content of request GET:${endpoint.url} expired`);
+                console.log(BgCyan + FgWhite, `[Cached response content of request GET:${endpoint.url} expired]`);
         }
         cachedRequests = cachedRequests.filter(endpoint => endpoint.Expire_Time > now);
     }

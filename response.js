@@ -4,7 +4,9 @@
 // Author : Nicolas Chourot
 // Lionel-Groulx College
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import * as serverVariables from "./serverVariables.js";
 import CachedRequests from "./cachedRequestsManager.js";
+let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
 
 export default class Response {
     constructor(HttpContext) {
@@ -28,6 +30,7 @@ export default class Response {
         }
         else
             this.res.end();
+        if (!hideHeadRequest)
             console.log(FgCyan + Bright, "Response status:", this.res.statusCode, this.errorContent);
         return true;
     }
@@ -36,7 +39,8 @@ export default class Response {
 
     ok() { return this.status(200); }       // ok status
     ETag(ETag) {
-        console.log(FgCyan + Bright, "Response header ETag key:", ETag);
+        if (!hideHeadRequest)
+            console.log(FgCyan + Bright, "Response header ETag key:", ETag);
         this.res.writeHead(204, { 'ETag': ETag });
         this.end();
     }
@@ -45,15 +49,15 @@ export default class Response {
             CachedRequests.add(this.HttpContext.req.url, jsonObj, ETag);
     }
     JSON(obj, ETag = "", fromCache = false) {   // ok status with content
-        if (ETag != "")
+        if (ETag !== "")
             this.res.writeHead(200, { 'content-type': 'application/json', 'ETag': ETag });
         else
             this.res.writeHead(200, { 'content-type': 'application/json' });
         if (obj != null) {
-            if (! fromCache)
+            if (!fromCache)
                 this.addInRequestsCache(obj, ETag)
             let content = JSON.stringify(obj);
-            console.log(FgCyan+Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
+            console.log(FgCyan + Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
             return this.end(content);
         } else
             return this.end();
