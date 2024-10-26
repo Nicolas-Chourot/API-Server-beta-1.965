@@ -5,19 +5,28 @@
     <meta charset="UTF-8">
     <meta author="Nicolas Chourot">
     <meta http-equiv="Content-Type" content="text/html; charset= ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Weird Dictionary</title>
     <style>
         .mainContainer {
             display: flex;
             flex-direction: column;
-            max-width: 900px;
+            max-width: 1220px;
             margin: auto;
             background-color: rgb(255, 255, 255);
             height: 100vh;
             border: 1px solid lightgray;
         }
 
+        .header {
+            display: grid;
+            grid-template-columns: repeat(27, auto);
+            align-items: center;
+            padding: 4px;
+        }
+
         .scrollContainer {
+            margin-top: 0px;
             overflow-x: hidden;
             overflow-y: scroll;
             border-top: 1px solid lightgray;
@@ -30,7 +39,7 @@
             max-width: 1600px;
             width: 100%;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 165px);
+            grid-template-columns: repeat(auto-fill, 230px);
         }
 
         .word {
@@ -46,19 +55,11 @@
         }
 
         .link:hover {
-            font-weight:bold;
+            font-weight: bold;
         }
 
-        div2 {
+        divx {
             border: 1px solid red;
-        }
-
-        .header {
-            display: grid;
-            grid-template-columns: repeat(27, auto);
-            align-items: center;
-            padding: 4px;
-            height: 28px;
         }
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -97,11 +98,10 @@
             <div class="letter link">Y</div>
             <div class="letter link">Z</div>
         </div>
-        <br>
-        <div class="scrollContainer">
+        <div id="content" class="scrollContainer">
             <div id="words" class="wordsContainer">
                 <!-- Used for items size -->
-                <div id="sample" class="word" ></div>
+                <div id="sample" class="word"></div>
             </div>
         </div>
     </div>
@@ -124,18 +124,18 @@
         height: $("#sample").outerHeight()
     };
     function setLimit() {
-        let nbColumns = Math.trunc($(".scrollContainer").innerWidth() / wordItemLayout.width);
-        let nbRows = Math.round($(".scrollContainer").innerHeight() / wordItemLayout.height * nbColumns) + nbColumns;
+        let nbColumns = Math.trunc($("#content").innerWidth() / wordItemLayout.width);
+        let nbRows = Math.round($("#content").innerHeight() / wordItemLayout.height * nbColumns) + nbColumns;
         limit = nbRows;
     }
     function scrollPosition() {
-        return $(".scrollContainer").scrollTop();
+        return $("#content").scrollTop();
     }
     function storeScrollPosition() {
         previousScrollPosition = scrollPosition();
     }
     function restoreScrollPosition() {
-        $(".scrollContainer").scrollTop(previousScrollPosition);
+        $("#content").scrollTop(previousScrollPosition);
     }
     $(document).ready(function () {
         $("#showDefinition").dialog({
@@ -195,7 +195,7 @@
             queryString += `&Val=${currentLetter}*`;
         let words = await webAPI_GET(queryString);
         if (words.length > 0) {
-            $(".scrollContainer").off(); // must shut off scroll events while updating container content
+            $("#content").off(); // must shut off scroll events while updating container content
             storeScrollPosition();
             if (!append) $("#words").empty();
             words.forEach(word => {
@@ -205,9 +205,9 @@
             $(".word").click(function () {
                 showDefinition($(this).html(), $(this).attr('title'));
             });
-            $(".scrollContainer").scroll(function () {
-                if ($(".scrollContainer").scrollTop() + $(".scrollContainer").outerHeight() >= ($("#words").outerHeight())) {
-                    $(".scrollContainer").off();
+            $("#content").scroll(function () {
+                if ($("#content").scrollTop() + $("#content").outerHeight() >= ($("#words").outerHeight())) {
+                    $("#content").off();
                     offset++;
                     refreshWordsContainer();
                 }
