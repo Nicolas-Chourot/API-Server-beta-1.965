@@ -148,7 +148,7 @@
         var resizeEndTriggerDelai = 300;
         $(window).on('resize', function (e) {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => { refreshWordsContainer(false); }, resizeEndTriggerDelai);
+            resizeTimer = setTimeout(() => { updateContent(false); }, resizeEndTriggerDelai);
         });
 
         $('.letter').click(function () {
@@ -162,10 +162,10 @@
                 currentLetter = "";
             else
                 currentLetter = selectedLetter;
-            refreshWordsContainer(false);
+            updateContent(false);
         })
 
-        refreshWordsContainer(false);
+        updateContent(false);
     })
 
     function showDefinition(word, definition) {
@@ -188,7 +188,7 @@
             });
         })
     }
-    async function refreshWordsContainer(append = true) {
+    async function updateContent(append = true) {
         setLimit();
         let queryString = append ? `?limit=${limit}&offset=${offset}` : `?limit=${limit * (offset + 1)}&offset=0`;
         if (currentLetter != "*")
@@ -209,7 +209,7 @@
                 if ($("#content").scrollTop() + $("#content").outerHeight() >= ($("#words").outerHeight())) {
                     $("#content").off();
                     offset++;
-                    refreshWordsContainer();
+                    updateContent();
                 }
             });
         }
