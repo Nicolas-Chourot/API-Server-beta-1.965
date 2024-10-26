@@ -206,8 +206,8 @@
                 showDefinition($(this).html(), $(this).attr('title'));
             });
             $("#content").scroll(function () {
-                if ($("#content").scrollTop() + $("#content").outerHeight() >= ($("#words").outerHeight())) {
-                    $("#content").off();
+                if ($("#content").scrollTop() + $("#content").outerHeight() >= $("#words").outerHeight()) {
+                    $("#content").off(); // must shut off scroll events while updating container content
                     offset++;
                     updateContent();
                 }
