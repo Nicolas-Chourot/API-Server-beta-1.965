@@ -30,9 +30,7 @@ export default class CachedRequestsManager {
             if (url != "") {
                 for (let cache of cachedRequests) {
                     if (cache.url == url) {
-                        // renew cached url
                         cache.Expire_Time = utilities.nowInSeconds() + requestCacheExpirationTime;
-                        console.log(BgCyan + FgWhite, `[Response content of request Get: ${url} retrieved from cache]`);
                         return cache;
                     }
                 }
@@ -42,9 +40,9 @@ export default class CachedRequestsManager {
         }
         return null;
     }
-    static clear(url) {
+    static clear(model) {
         if (url != "")
-            cachedRequests = cachedRequests.filter(cache => cache.url.toLowerCase().indexOf(url.toLowerCase()) == -1);
+            cachedRequests = cachedRequests.filter(cache => cache.url.toLowerCase().indexOf(model.toLowerCase()) == -1);
     }
     static flushExpired() {
         let now = utilities.nowInSeconds();
@@ -60,12 +58,12 @@ export default class CachedRequestsManager {
             if (cacheFound) {
                 if (Repository.getETag(HttpContext.path.model) == cacheFound.ETag) {
                     HttpContext.response.JSON(cacheFound.content, cacheFound.ETag, true);
+                    console.log(BgCyan + FgWhite, `[Response content of request Get: ${url} retrieved from cache]`);
                     return true;
                 } else {
                     CachedRequestsManager.clear(HttpContext.path.model);
                     return false;
                 }
-
             }
         }
         return false;

@@ -125,8 +125,8 @@
     };
     function setLimit() {
         let nbColumns = Math.trunc($("#content").innerWidth() / wordItemLayout.width);
-        let nbRows = Math.round($("#content").innerHeight() / wordItemLayout.height * nbColumns) + nbColumns;
-        limit = nbRows;
+        let nbRows = Math.round($("#content").innerHeight() / wordItemLayout.height);
+        limit = nbRows * nbColumns + nbColumns;
     }
     function scrollPosition() {
         return $("#content").scrollTop();
