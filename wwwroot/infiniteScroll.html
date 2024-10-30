@@ -99,7 +99,7 @@
             <div class="letter link">Z</div>
         </div>
         <div id="scrollPanel" class="scrollContainer">
-            <div id="words" class="wordsContainer">
+            <div id="wordsPanel" class="wordsContainer">
                 <!-- Used for items size -->
                 <div id="sample" class="word"></div>
             </div>
@@ -148,7 +148,7 @@
             let nbColumns = Math.trunc(this.scrollPanel.innerWidth() / this.itemLayout.width);
             if (nbColumns < 1) nbColumns = 1;
             let nbRows = Math.round(this.scrollPanel.innerHeight() / this.itemLayout.height);
-            this.currentPage.limit = nbRows * nbColumns + nbColumns /* assure to have an content overflow */;
+            this.currentPage.limit = nbRows * nbColumns + nbColumns /* make sure to always have a content overflow */;
         }
         currentPageToQueryString(append = false) {
             this.setCurrentPageLimit();
@@ -194,7 +194,7 @@
     }
 
     $(document).ready(function () {
-        pageManager = new PageManager('scrollPanel', 'words', wordItemLayout, getWords);
+        pageManager = new PageManager('scrollPanel', 'wordsPanel', wordItemLayout, getWords);
         $("#showDefinition").dialog({
             autoOpen: false,
             show: { effect: 'fade', speed: 400 },
@@ -245,7 +245,7 @@
         let words = await webAPI_GET(queryString);
         if (words.length > 0) {
             words.forEach(word => {
-                $("#words").append("<div class='link word' data-placement='bottom' title='" + word.Def + "'>" + word.Val + "</div>");
+                $("#wordsPanel").append("<div class='link word' data-placement='bottom' title='" + word.Def + "'>" + word.Val + "</div>");
             });
             $(".word").click(function () {
                 showDefinition($(this).html(), $(this).attr('title'));
