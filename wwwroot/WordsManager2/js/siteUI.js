@@ -32,7 +32,7 @@ function Init_UI() {
     })
 }
 function doSearch() {
-    search = $("#searchKey").val();
+    search = $("#searchKey").val().replace(' ',',');
     pageManager.reset();
 }
 function renderAbout() {
@@ -43,9 +43,7 @@ function renderAbout() {
     $("#aboutContainer").show();
 }
 async function renderWords(queryString) {
-    if (search != "") queryString += "&Val=" + search;
-   
-
+    if (search != "") queryString += "&keywords=" + search;
     let words = await API_GetWords(queryString);
     if (words.length > 0) {
         addWaitingGif();
