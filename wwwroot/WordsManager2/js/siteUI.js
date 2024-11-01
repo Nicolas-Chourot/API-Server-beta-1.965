@@ -59,7 +59,6 @@ function addWaitingGif() {
 function removeWaitingGif() {
     $("#waitingGif").remove('');
 }
-
 function renderError(message) {
     $("#wordsPanel").append(
         $(`
