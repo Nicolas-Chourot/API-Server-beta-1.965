@@ -9,11 +9,11 @@ function Init_UI() {
         width: $("#sample").outerWidth(),
         height: $("#sample").outerHeight()
     };
-    pageManager = new PageManager('scrollPanel', 'wordsPanel', wordItemLayout, renderWords);   
+    pageManager = new PageManager('scrollPanel', 'wordsPanel', wordItemLayout, renderWords);
     $("#actionTitle").text("Mots");
     $("#search").show();
     $("#abort").hide();
-    
+
     $('#abort').on("click", async function () {
         $("#aboutContainer").hide();
         $("#abort").hide();
@@ -32,7 +32,7 @@ function Init_UI() {
     })
 }
 function doSearch() {
-    search = $("#searchKey").val().replace(' ',',');
+    search = $("#searchKey").val().replace(' ', ',');
     pageManager.reset();
 }
 function renderAbout() {
@@ -44,14 +44,18 @@ function renderAbout() {
 }
 async function renderWords(queryString) {
     if (search != "") queryString += "&keywords=" + search;
-    let words = await API_GetWords(queryString);
-    if (words.length > 0) {
-        addWaitingGif();
-        words.forEach(word => {
-            $("#wordsPanel").append(renderWord(word));
-        });
-        removeWaitingGif();
-    }
+    addWaitingGif();
+    let words = await API.getWords(queryString);
+    if (API.error)
+        renderError(API.currentHttpError);
+    else
+        if (words.length > 0) {
+            words.forEach(word => {
+                $("#wordsPanel").append(renderWord(word));
+            });
+        }
+    removeWaitingGif();
+
 }
 function addWaitingGif() {
     $("#wordsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
@@ -60,6 +64,7 @@ function removeWaitingGif() {
     $("#waitingGif").remove('');
 }
 function renderError(message) {
+    removeWaitingGif();
     $("#wordsPanel").append(
         $(`
             <div class="errorContainer">

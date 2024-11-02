@@ -1,47 +1,62 @@
 //const API_URL = "https://api-server-5.glitch.me/api/words";
 const API_URL = "http://localhost:5000/api/words";
-let currentHttpError = "";
+class API {
+    static initHttpState() {
+        this.currentHttpError = "";
+        this.currentStatus = 0;
+        this.error = false;
+    }
+    static setHttpErrorState(xhr) {
+        if (xhr.responseJSON)
+            this.currentHttpError = xhr.responseJSON.error_description;
+        else
+            this.currentHttpError = xhr.statusText == 'error' ? "Service introuvable" : xhr.statusText;
+        this.currentStatus = xhr.status;
+        this.error = true;
+    }
 
-function API_getcurrentHttpError () {
-    return currentHttpError; 
-}
-function API_GetWords(query = "") {
-    return new Promise(resolve => {
-        $.ajax({
-            url: API_URL + query,
-            success: words => { currentHttpError = ""; resolve(words); },
-            error: (xhr) => { console.log(xhr); resolve(null); }
+    static getWords(query = "") {
+        API.initHttpState();
+        return new Promise(resolve => {
+            $.ajax({
+                url: API_URL + query,
+                success: words => { resolve(words); },
+                error: (xhr) => { API.setHttpErrorState(xhr); resolve(null); }
+            });
         });
-    });
-}
-function API_GetWord(wordId) {
-    return new Promise(resolve => {
-        $.ajax({
-            url: API_URL + "/" + wordId,
-            success: word => { currentHttpError = ""; resolve(word); },
-            error: (xhr) => { currentHttpError = xhr.responseJSON.error_description; resolve(null); }
+    }
+    static getWord(wordId) {
+        API.initHttpState();
+        return new Promise(resolve => {
+            $.ajax({
+                url: API_URL + "/" + wordId,
+                success: word => { resolve(word); },
+                error: (xhr) => { API.setHttpErrorState(xhr); resolve(null); }
+            });
         });
-    });
-}
-function API_SaveWord(word, create) {
-    return new Promise(resolve => {
-        $.ajax({
-            url: create ? API_URL :  API_URL + "/" + word.Id,
-            type: create ? "POST" : "PUT",
-            contentType: 'application/json',
-            data: JSON.stringify(word),
-            success: (/*data*/) => { currentHttpError = ""; resolve(true); },
-            error: (xhr) => {currentHttpError = xhr.responseJSON.error_description; resolve(false /*xhr.status*/); }
+    }
+    static saveWord(word, create) {
+        API.initHttpState();
+        return new Promise(resolve => {
+            $.ajax({
+                url: create ? API_URL : API_URL + "/" + word.Id,
+                type: create ? "POST" : "PUT",
+                contentType: 'application/json',
+                data: JSON.stringify(word),
+                success: (/*data*/) => { resolve(true); },
+                error: (xhr) => { API.setHttpErrorState(xhr); resolve(null); }
+            });
         });
-    });
-}
-function API_DeleteWord(id) {
-    return new Promise(resolve => {
-        $.ajax({
-            url: API_URL + "/" + id,
-            type: "DELETE",
-            success: () => { currentHttpError = ""; resolve(true); },
-            error: (xhr) => { currentHttpError = xhr.responseJSON.error_description; resolve(false /*xhr.status*/); }
+    }
+    static deleteWord(id) {
+        API.initHttpState();
+        return new Promise(resolve => {
+            $.ajax({
+                url: API_URL + "/" + id,
+                type: "DELETE",
+                success: () => { resolve(true); },
+                error: (xhr) => { API.setHttpErrorState(xhr); resolve(null); }
+            });
         });
-    });
+    }
 }
