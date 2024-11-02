@@ -13,9 +13,11 @@ function Init_UI() {
     $("#actionTitle").text("Mots");
     $("#search").show();
     $("#abort").hide();
+    $("#errorContainer").hide();
 
     $('#abort').on("click", async function () {
         $("#aboutContainer").hide();
+        $("#errorContainer").hide();
         $("#abort").hide();
         $("#search").show();
         $("#scrollPanel").show();
@@ -42,6 +44,22 @@ function renderAbout() {
     $("#actionTitle").text("À propos...");
     $("#aboutContainer").show();
 }
+function renderError(message) {
+    removeWaitingGif();
+    $("#scrollPanel").hide();
+    $("#abort").show();
+    $("#search").hide();
+    $("#actionTitle").text("Erreur du serveur...");
+    $("#errorContainer").show();
+    $("#errorContainer").empty();
+    $("#errorContainer").append(
+        $(`
+            <span class="errorContainer">
+                ${message}
+            </span>
+        `)
+    );
+}
 async function renderWords(queryString) {
     if (search != "") queryString += "&keywords=" + search;
     addWaitingGif();
@@ -63,16 +81,7 @@ function addWaitingGif() {
 function removeWaitingGif() {
     $("#waitingGif").remove('');
 }
-function renderError(message) {
-    removeWaitingGif();
-    $("#wordsPanel").append(
-        $(`
-            <div class="errorContainer">
-                ${message}
-            </div>
-        `)
-    );
-}
+
 function renderWord(word) {
     return $(`
      <div class="wordRow" word_id=${word.Id}">
