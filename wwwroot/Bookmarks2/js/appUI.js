@@ -320,6 +320,11 @@ function renderBookmarkForm(Bookmark = null) {
             showBookmarks();
             await pageManager.update(false);
             compileCategories();
+            let b = $("#bookmark_" + Bookmark.Id);
+            let sp = document.getElementById('scrollPanel');
+            b[0].scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+            console.log(Bookmark.Title, ' top -> ', b.offset().top, b.innerHeight());
+           $("#scrollPanel").scrollTop(b.offset().top -  $("#scrollPanel").offset().top);
         }
         else
             renderError("Une erreur est survenue!");
