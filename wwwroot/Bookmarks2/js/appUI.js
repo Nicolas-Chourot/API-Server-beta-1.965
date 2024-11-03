@@ -6,6 +6,7 @@ let hold_Periodic_Refresh = false;
 let pageManager;
 let waitingGifTrigger = 2000;
 let waiting = null;
+let itemLayout;
 
 function addWaitingGif() {
     clearTimeout(waiting);
@@ -21,7 +22,7 @@ function removeWaitingGif() {
 Init_UI();
 
 async function Init_UI() {
-    let itemLayout = {
+    itemLayout = {
         width: $("#sample").outerWidth(),
         height: $("#sample").outerHeight()
     };
@@ -319,9 +320,6 @@ function renderBookmarkForm(Bookmark = null) {
             showBookmarks();
             await pageManager.update(false);
             compileCategories();
-            let b = $("#bookmark_" + Bookmark.Id);
-            console.log(b, b.offset().top);
-            $("#scrollPanel").scrollTop(b.offset().top);
         }
         else
             renderError("Une erreur est survenue!");
