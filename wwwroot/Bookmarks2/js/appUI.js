@@ -320,11 +320,7 @@ function renderBookmarkForm(Bookmark = null) {
             showBookmarks();
             await pageManager.update(false);
             compileCategories();
-            let b = $("#bookmark_" + Bookmark.Id);
-            let sp = document.getElementById('scrollPanel');
-            b[0].scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-            console.log(Bookmark.Title, ' top -> ', b.offset().top, b.innerHeight());
-           $("#scrollPanel").scrollTop(b.offset().top -  $("#scrollPanel").offset().top);
+            pageManager.scrollToElem(Bookmark.Id);
         }
         else
             renderError("Une erreur est survenue!");
@@ -346,7 +342,7 @@ function makeFavicon(url, big = false) {
 function renderBookmark(Bookmark) {
     let favicon = makeFavicon(Bookmark.Url);
     return $(`
-     <div class="BookmarkRow" id='bookmark_${Bookmark.Id}'>
+     <div class="BookmarkRow" id='${Bookmark.Id}'>
         <div class="BookmarkContainer noselect">
             <div class="BookmarkLayout">
                 <div class="Bookmark">

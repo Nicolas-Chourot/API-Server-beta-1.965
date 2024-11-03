@@ -38,6 +38,11 @@ class PageManager {
         }
         return `?limit=${limit}&offset=${offset}`;
     }
+    scrollToElem(elemId) {
+        this.scrollPanel.animate({ 
+            scrollTop : $("#" + elemId).offset().top - this.scrollPanel.offset().top 
+        },300);
+    }
     scrollPosition() {
         return this.scrollPanel.scrollTop();
     }
