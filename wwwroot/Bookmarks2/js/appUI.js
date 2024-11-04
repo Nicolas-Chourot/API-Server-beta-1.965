@@ -63,7 +63,7 @@ function start_Periodic_Refresh() {
             let etag = await Bookmarks_API.HEAD();
             if (currentETag != etag) {
                 currentETag = etag;
-                pageManager.update(false);
+                await pageManager.update(false);
                 compileCategories();
             }
         }
@@ -220,7 +220,7 @@ async function renderDeleteBookmarkForm(id) {
                 await Bookmarks_API.Delete(Bookmark.Id);
                 if (!Bookmarks_API.error) {
                     showBookmarks();
-                    pageManager.update(false);
+                    await pageManager.update(false);
                     compileCategories();
                 }
                 else {

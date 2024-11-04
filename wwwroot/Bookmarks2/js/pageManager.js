@@ -39,9 +39,10 @@ class PageManager {
         return `?limit=${limit}&offset=${offset}`;
     }
     scrollToElem(elemId) {
-        this.scrollPanel.animate({ 
-            scrollTop : $("#" + elemId).offset().top - this.scrollPanel.offset().top 
-        },300);
+        /* TODO 
+        this.scrollPanel.scrollTop($("#" + elemId).offset().top - this.scrollPanel.offset().top);
+        console.log(elemId, this.scrollPanel.scrollTop(), $("#" + elemId).offset().top, this.scrollPanel.offset().top)
+        */
     }
     scrollPosition() {
         return this.scrollPanel.scrollTop();
@@ -71,6 +72,7 @@ class PageManager {
                 instance.currentPage.offset++;
                 instance.update(true);
             }
+            //console.log(`scroll`,instance.scrollPanel.scrollTop())
         });
     }
 }
