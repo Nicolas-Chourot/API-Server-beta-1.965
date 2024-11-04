@@ -4,10 +4,10 @@ let selectedCategory = "";
 let currentETag = "";
 let hold_Periodic_Refresh = false;
 let pageManager;
-let waitingGifTrigger = 2000;
-let waiting = null;
 let itemLayout;
 
+let waiting = null;
+let waitingGifTrigger = 2000;
 function addWaitingGif() {
     clearTimeout(waiting);
     waiting = setTimeout(() => {
@@ -16,7 +16,7 @@ function addWaitingGif() {
 }
 function removeWaitingGif() {
     clearTimeout(waiting);
-    $("#waitingGif").remove('');
+    $("#waitingGif").remove();
 }
 
 Init_UI();

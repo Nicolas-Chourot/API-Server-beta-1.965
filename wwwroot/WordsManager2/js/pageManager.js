@@ -1,4 +1,5 @@
 class PageManager {
+    // getItemsCallBack must return true when there is no more data to collect
     constructor(scrollPanelId, itemsPanelId, itemLayout, getItemsCallBack) {
         this.scrollPanel = $(`#${scrollPanelId}`);
         this.itemsPanel = $(`#${itemsPanelId}`);
@@ -37,6 +38,11 @@ class PageManager {
         }
         return `?limit=${limit}&offset=${offset}`;
     }
+    scrollToElem(elemId) {
+        this.scrollPanel.animate({ 
+            scrollTop : $("#" + elemId).offset().top - this.scrollPanel.offset().top 
+        },300);
+    }
     scrollPosition() {
         return this.scrollPanel.scrollTop();
     }
@@ -56,12 +62,11 @@ class PageManager {
     async update(append = true) {
         this.storeScrollPosition();
         if (!append) this.itemsPanel.empty();
-        await this.getItems(this.currentPageToQueryString(append));
+        let endOfData = await this.getItems(this.currentPageToQueryString(append));
         this.restoreScrollPosition();
-
         let instance = this;
         this.scrollPanel.scroll(function () {
-            if (instance.scrollPanel.scrollTop() + instance.scrollPanel.outerHeight() >= instance.itemsPanel.outerHeight()) {
+            if (!endOfData && (instance.scrollPanel.scrollTop() + instance.scrollPanel.outerHeight() >= instance.itemsPanel.outerHeight() - instance.itemLayout.height / 2)) {
                 instance.scrollPanel.off();
                 instance.currentPage.offset++;
                 instance.update(true);

@@ -4,7 +4,7 @@ let pageManager;
 Init_UI();
 
 function Init_UI() {
-    $('#aboutContainer').hide();
+
     let wordItemLayout = {
         width: $("#sample").outerWidth(),
         height: $("#sample").outerHeight()
@@ -13,6 +13,7 @@ function Init_UI() {
     $("#actionTitle").text("Mots");
     $("#search").show();
     $("#abort").hide();
+    $('#aboutContainer').hide();
     $("#errorContainer").hide();
 
     $('#abort').on("click", async function () {
@@ -63,23 +64,23 @@ function renderError(message) {
 async function renderWords(queryString) {
     if (search != "") queryString += "&keywords=" + search;
     addWaitingGif();
+    let endOfData = true;
     let words = await API.getWords(queryString);
     if (API.error)
         renderError(API.currentHttpError);
     else
         if (words.length > 0) {
-            words.forEach(word => {
-                $("#wordsPanel").append(renderWord(word));
-            });
-        }
-    removeWaitingGif();
-
+            words.forEach(word => { $("#wordsPanel").append(renderWord(word)); });
+            endOfData = false;
+        } else
+            removeWaitingGif();
+    return true;
 }
 function addWaitingGif() {
     $("#wordsPanel").append($("<div id='waitingGif' class='waitingGifcontainer'><img class='waitingGif' src='Loading_icon.gif' /></div>'"));
 }
 function removeWaitingGif() {
-    $("#waitingGif").remove('');
+    $("#waitingGif").remove();
 }
 
 function renderWord(word) {
