@@ -38,11 +38,15 @@ class PageManager {
         }
         return `?limit=${limit}&offset=${offset}`;
     }
+
     scrollToElem(elemId) {
-        /* TODO 
-        this.scrollPanel.scrollTop($("#" + elemId).offset().top - this.scrollPanel.offset().top);
-        console.log(elemId, this.scrollPanel.scrollTop(), $("#" + elemId).offset().top, this.scrollPanel.offset().top)
-        */
+        let itemToReach = $("#" + elemId);
+        if (itemToReach) {
+            let itemsContainer = itemToReach.parent();
+            this.scrollPanel.animate({
+                scrollTop: itemToReach.offset().top - itemsContainer.offset().top
+            }, 500);
+        }
     }
     scrollPosition() {
         return this.scrollPanel.scrollTop();
