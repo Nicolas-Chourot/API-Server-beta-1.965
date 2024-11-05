@@ -39,9 +39,13 @@ class PageManager {
         return `?limit=${limit}&offset=${offset}`;
     }
     scrollToElem(elemId) {
-        this.scrollPanel.animate({ 
-            scrollTop : $("#" + elemId).offset().top - this.scrollPanel.offset().top 
-        },300);
+        let itemToReach = $("#" + elemId);
+        if (itemToReach) {
+            let itemsContainer = itemToReach.parent();
+            this.scrollPanel.animate({
+                scrollTop: itemToReach.offset().top - itemsContainer.offset().top
+            }, 500);
+        }
     }
     scrollPosition() {
         return this.scrollPanel.scrollTop();
