@@ -38,8 +38,6 @@ async function Init_UI() {
         renderAbout();
     });
     showBookmarks();
-    $("#bookmarkForm").hide();
-    $("#aboutContainer").hide();
     start_Periodic_Refresh();
 }
 function showBookmarks() {
